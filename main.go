@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/mdayaram/cgofail/jello"
 	"github.com/mdayaram/cgofail/worker"
 	"sync"
 	"time"
@@ -20,15 +21,22 @@ func Provide(wch chan int, rch chan time.Duration, trials int) {
 
 func main() {
 	workers := flag.Int("w", 1, "Number of workers to allocate.")
-	concurrency := flag.Int("c", 10000, "Number of work providers (concurrency).")
-	trials := flag.Int("t", 10000, "Number of pieces of work each provider provides (trials).")
+	concurrency := flag.Int("c", 1000, "Number of work providers (concurrency).")
+	trials := flag.Int("t", 100, "Number of pieces of work each provider provides (trials).")
+	cgo := flag.Bool("cgo", false, "Use cgo for the jiggling instead of go.")
 	flag.Parse()
 
 	sendWork := make(chan int, *workers)
 	recvResults := make(chan time.Duration, *workers)
 
 	for i := 0; i < *workers; i++ {
-		w := worker.New(sendWork, recvResults)
+		var gel jello.Jello
+		if *cgo {
+			gel = jello.NewCgo()
+		} else {
+			gel = jello.NewGor()
+		}
+		w := worker.New(sendWork, recvResults, gel)
 		w.WorkIt()
 	}
 

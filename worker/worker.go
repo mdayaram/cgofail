@@ -1,30 +1,18 @@
 package worker
 
-/*
-#include <stdio.h>
-#include <stdlib.h>
-
-int jiggle() {
-	int i, sum = 0;
-	for(i = 0; i < 10000; i++) {
-		sum += i;
-	}
-	return i;
-}
-*/
-import "C"
-
 import (
+	"github.com/mdayaram/cgofail/jello"
 	"time"
 )
 
 type Worker struct {
 	recv chan int
 	send chan time.Duration
+	gel  jello.Jello
 }
 
-func New(recv chan int, send chan time.Duration) *Worker {
-	return &Worker{recv: recv, send: send}
+func New(recv chan int, send chan time.Duration, jello jello.Jello) *Worker {
+	return &Worker{recv: recv, send: send, gel: jello}
 }
 
 func (w *Worker) WorkIt() {
@@ -34,7 +22,7 @@ func (w *Worker) WorkIt() {
 		for {
 			<-w.recv
 			start = time.Now()
-			C.jiggle()
+			w.gel.Jiggle()
 			dur = time.Now().Sub(start)
 			w.send <- dur
 		}
