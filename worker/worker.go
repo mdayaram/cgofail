@@ -2,6 +2,7 @@ package worker
 
 import (
 	"github.com/mdayaram/cgofail/jello"
+	"runtime"
 	"time"
 )
 
@@ -15,8 +16,12 @@ func New(recv chan int, send chan time.Duration, jello jello.Jello) *Worker {
 	return &Worker{recv: recv, send: send, gel: jello}
 }
 
-func (w *Worker) WorkIt() {
+func (w *Worker) WorkIt(lockThread bool) {
 	go func() {
+		if lockThread {
+			runtime.LockOSThread()
+		}
+
 		var start time.Time
 		var dur time.Duration
 		for {

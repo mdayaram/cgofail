@@ -26,6 +26,7 @@ func main() {
 	concurrency := flag.Int("c", 1000, "Number of work providers (concurrency).")
 	trials := flag.Int("t", 100, "Number of pieces of work each provider provides (trials).")
 	cgo := flag.Bool("cgo", false, "Use cgo for the jiggling instead of go.")
+	lock := flag.Bool("lock", false, "Lock each worker to an OS thread.")
 	flag.Parse()
 
 	sendWork := make(chan int, *workers)
@@ -37,6 +38,9 @@ func main() {
 		println("Using normal jello...")
 	}
 	println("Hiring", *workers, "cooks...")
+	if *lock {
+		println(" + With their dedicated kitchens...")
+	}
 	println("Hiring", *concurrency, "waiters...")
 	println("Each w", *trials, "customers...")
 
@@ -48,7 +52,7 @@ func main() {
 			gel = jello.NewGor()
 		}
 		w := worker.New(sendWork, recvResults, gel)
-		w.WorkIt()
+		w.WorkIt(*lock)
 	}
 
 	for i := 0; i < *concurrency; i++ {
