@@ -64,11 +64,13 @@ func NewGor() *Gor {
 
 func (g *Gor) Jiggle(one, two string) string {
 	newbuf := ""
-	for _, r := range one {
-		newbuf += string(r)
+	lenone := len(one)
+	lentwo := len(two)
+	for i := 0; i < lenone; i++ {
+		newbuf += string(one[i])
 	}
-	for _, r := range two {
-		newbuf += string(r)
+	for i := 0; i < lentwo; i++ {
+		newbuf += string(two[i])
 	}
 	return newbuf
 }

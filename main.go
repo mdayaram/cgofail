@@ -22,10 +22,10 @@ func Provide(wch chan int, rch chan time.Duration, trials int) {
 }
 
 func main() {
-	jiggles := flag.Int("j", 1, "Number of times to jiggle the jello (# of times work is executed).")
-	workers := flag.Int("w", 1, "Number of workers to allocate.")
-	concurrency := flag.Int("c", 100, "Number of work providers (concurrency).")
-	trials := flag.Int("t", 100, "Number of pieces of work each provider provides (trials).")
+	jiggles := flag.Int("j", 1, "Number of times to jiggle the jello (# of times work is executed).") // Jiggles
+	workers := flag.Int("c", 1, "Number of workers to allocate.")                                     // Cooks
+	concurrency := flag.Int("w", 100, "Number of work providers (concurrency).")                      // Waiters
+	trials := flag.Int("d", 100, "Number of pieces of work each provider provides (trials).")         // Diners
 	cgo := flag.Bool("cgo", false, "Use cgo for the jiggling instead of go.")
 	lock := flag.Bool("lock", false, "Lock each worker to an OS thread.")
 	flag.Parse()
@@ -38,13 +38,13 @@ func main() {
 	} else {
 		println("Using normal jello...")
 	}
-	println("Hiring", *workers, "cooks...")
+	println("Hiring", *workers, "[c]ooks...")
 	if *lock {
 		println(" + With their dedicated kitchens...")
 	}
-	println("Hiring", *concurrency, "waiters...")
-	println("Each w", *trials, "customers...")
-	println("Jiggling", *jiggles, " times...")
+	println("Hiring", *concurrency, "[w]aiters...")
+	println("Each w", *trials, "[d]iners...")
+	println("Giving each jello", *jiggles, " [j]iggles...")
 
 	for i := 0; i < *workers; i++ {
 		var gel jello.Jello
