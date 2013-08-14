@@ -22,8 +22,9 @@ func Provide(wch chan int, rch chan time.Duration, trials int) {
 }
 
 func main() {
+	jiggles := flag.Int("j", 1, "Number of times to jiggle the jello (# of times work is executed).")
 	workers := flag.Int("w", 1, "Number of workers to allocate.")
-	concurrency := flag.Int("c", 1000, "Number of work providers (concurrency).")
+	concurrency := flag.Int("c", 100, "Number of work providers (concurrency).")
 	trials := flag.Int("t", 100, "Number of pieces of work each provider provides (trials).")
 	cgo := flag.Bool("cgo", false, "Use cgo for the jiggling instead of go.")
 	lock := flag.Bool("lock", false, "Lock each worker to an OS thread.")
@@ -43,6 +44,7 @@ func main() {
 	}
 	println("Hiring", *concurrency, "waiters...")
 	println("Each w", *trials, "customers...")
+	println("Jiggling", *jiggles, " times...")
 
 	for i := 0; i < *workers; i++ {
 		var gel jello.Jello
@@ -51,7 +53,7 @@ func main() {
 		} else {
 			gel = jello.NewGor()
 		}
-		w := worker.New(sendWork, recvResults, gel)
+		w := worker.New(sendWork, recvResults, gel, *jiggles)
 		w.WorkIt(*lock)
 	}
 
