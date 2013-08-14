@@ -1,68 +1,68 @@
 [1]
-./cgofail -cgo -c=1000 -j=1 -w=1 -t=10
+./cgofail -cgo -c=1000 -j=1 -w=1 -t=100
 Concurrency: 1000
 Jumps: 1
 Workers: 1
 Customers: 10
 
 [2]
-./cgofail -cgo -c=1000 -j=10 -w=1 -t=10
+./cgofail -cgo -c=1000 -j=10 -w=1 -t=100
 Concurrency: 1000
 Jumps: 10
 Workers: 1
 Customers: 10
 
 [3]
-./cgofail -cgo -c=1000 -j=100 -w=1 -t=10
+./cgofail -cgo -c=1000 -j=100 -w=1 -t=100
 Concurrency: 1000
 Jumps: 100
 Workers: 1
 Customers: 10
 
 [4]
-./cgofail -cgo -c=1000 -j=1000 -w=1 -t=10
+./cgofail -cgo -c=1000 -j=1000 -w=1 -t=100
 Concurrency: 1000
 Jumps: 1000
 Workers: 1
 Customers: 10
 
 [5]
-./cgofail -cgo -c=1000 -j=10000 -w=1 -t=10
+./cgofail -cgo -c=1000 -j=10000 -w=1 -t=100
 Concurrency: 1000
 Jumps: 10000
 Workers: 1
 Customers: 10
 
 [6]
-./cgofail -cgo -c=1000 -j=1 -w=100 -t=10
+./cgofail -cgo -c=1000 -j=1 -w=100 -t=100
 Concurrency: 1000
 Jumps: 1
 Workers: 100
 Customers: 10
 
 [7]
-./cgofail -cgo -c=1000 -j=10 -w=100 -t=10
+./cgofail -cgo -c=1000 -j=10 -w=100 -t=100
 Concurrency: 1000
 Jumps: 10
 Workers: 100
 Customers: 10
 
 [8]
-./cgofail -cgo -c=1000 -j=100 -w=100 -t=10
+./cgofail -cgo -c=1000 -j=100 -w=100 -t=100
 Concurrency: 1000
 Jumps: 100
 Workers: 100
 Customers: 10
 
 [9]
-./cgofail -cgo -c=1000 -j=1000 -w=100 -t=10
+./cgofail -cgo -c=1000 -j=1000 -w=100 -t=100
 Concurrency: 1000
 Jumps: 1000
 Workers: 100
 Customers: 10
 
 [10]
-./cgofail -cgo -c=1000 -j=10000 -w=100 -t=10
+./cgofail -cgo -c=1000 -j=10000 -w=100 -t=100
 Concurrency: 1000
 Jumps: 10000
 Workers: 100

@@ -6,7 +6,7 @@ package jello
 #include <string.h>
 
 char* jiggle(char* one, char* two) {
-	int i, lenOne, sizeOne, sizeTwo;
+	int i, lenOne, lenTwo, sizeOne, sizeTwo;
 	char* newbuff;
 
 	if ( one == NULL && two == NULL ) {
@@ -18,16 +18,17 @@ char* jiggle(char* one, char* two) {
 	}
 
 	lenOne = strlen(one);
+	lenTwo = strlen(two);
 	sizeOne = sizeof(one) * lenOne;
-	sizeTwo = sizeof(two) * strlen(two);
+	sizeTwo = sizeof(two) * lenTwo;
 	newbuff = (char*) malloc(sizeOne + sizeTwo + 1);
-	for(i = 0; i < strlen(one); i++) {
+	for(i = 0; i < lenOne; i++) {
 		newbuff[i] = one[i];
 	}
-	for(i = 0; i < strlen(two); i++) {
+	for(i = 0; i < lenTwo; i++) {
 		newbuff[lenOne + i] = two[i];
 	}
-	newbuff[lenOne + strlen(two)] = '\0';
+	newbuff[lenOne + lenTwo] = '\0';
 	return newbuff;
 }
 */
