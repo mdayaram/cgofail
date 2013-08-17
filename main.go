@@ -65,6 +65,7 @@ func main() {
 		}()
 	}
 	wait4me.Wait()
+	close(order_up)
 
 	println("Summary (units in nano seconds):\n")
 	println(datas.String())

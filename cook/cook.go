@@ -36,8 +36,7 @@ func (w *Cook) StartCooking(use_private_kitchen bool) {
 
 		var start time.Time
 		var dur time.Duration
-		for {
-			order := <-w.order_up
+		for order := range w.order_up {
 			start = time.Now()
 			for i := 0; i < order.Jellos; i++ {
 				jresult := w.gel.Jiggle(w.jello_recipe, w.jello_recipe)
