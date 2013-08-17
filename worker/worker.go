@@ -1,24 +1,25 @@
 package worker
 
 import (
-	"github.com/mdayaram/cgofail/jello"
+	"io/ioutil"
 	"runtime"
 	"time"
-	"io/ioutil"
+
+	"github.com/mdayaram/cgofail/jello"
 )
 
 type Worker struct {
-	recv chan int
-	send chan time.Duration
-	gel  jello.Jello
+	recv    chan int
+	send    chan time.Duration
+	gel     jello.Jello
 	jiggles int
-	text string
+	text    string
 }
 
-func New(recv chan int, send chan time.Duration, jello jello.Jello, jiggles int) *Worker {
-	inbytes, err := ioutil.ReadFile("lol.txt")
+func New(recv chan int, send chan time.Duration, jello jello.Jello, jiggles int, recipe string) *Worker {
+	inbytes, err := ioutil.ReadFile(recipe)
 	if err != nil {
-		panic("FILE DAMMIT!")
+		panic(err)
 	}
 	instr := string(inbytes)
 	return &Worker{recv: recv, send: send, gel: jello, jiggles: jiggles, text: instr}
@@ -37,8 +38,8 @@ func (w *Worker) WorkIt(lockThread bool) {
 			start = time.Now()
 			for i := 0; i < w.jiggles; i++ {
 				jresult := w.gel.Jiggle(w.text, w.text)
-				if jresult != w.text + w.text {
-					panic("DAMMIT")
+				if jresult != w.text+w.text {
+					panic("Customer found a bug in their Jello.")
 				}
 			}
 			dur = time.Now().Sub(start)

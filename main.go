@@ -2,11 +2,12 @@ package main
 
 import (
 	"flag"
+	"sync"
+	"time"
+
 	"github.com/mdayaram/cgofail/jello"
 	"github.com/mdayaram/cgofail/worker"
 	"github.com/mdayaram/simstat"
-	"sync"
-	"time"
 )
 
 var wait4me sync.WaitGroup
@@ -22,44 +23,46 @@ func Provide(wch chan int, rch chan time.Duration, trials int) {
 }
 
 func main() {
-	jiggles := flag.Int("j", 1, "Number of times to jiggle the jello (# of times work is executed).") // Jiggles
-	workers := flag.Int("c", 1, "Number of workers to allocate.")                                     // Cooks
-	concurrency := flag.Int("w", 100, "Number of work providers (concurrency).")                      // Waiters
-	trials := flag.Int("d", 100, "Number of pieces of work each provider provides (trials).")         // Diners
+	recipe := flag.String("r", "default_recipe.txt", "Jello recipe to use for making the jello.")
+	jellos := flag.Int("j", 1, "Number of jellos a cook has to make for a single order.")
+	cooks := flag.Int("c", 1, "Number of cookes in the kitcken cooking.")
+	waiters := flag.Int("w", 100, "Number of waiters taking orders.")
+	orders := flag.Int("o", 100, "Number of orders each waiter takes.")
 	cgo := flag.Bool("cgo", false, "Use cgo for the jiggling instead of go.")
-	lock := flag.Bool("lock", false, "Lock each worker to an OS thread.")
+	lock := flag.Bool("lock", false, "Lock each cook to an OS thread.")
 	flag.Parse()
 
-	sendWork := make(chan int, *workers)
-	recvResults := make(chan time.Duration, *workers)
+	sendWork := make(chan int, *cooks)
+	recvResults := make(chan time.Duration, *cooks)
 
 	if *cgo {
-		println("Using cgo jello...")
+		println("Using [cgo] jello...")
 	} else {
 		println("Using normal jello...")
 	}
-	println("Hiring", *workers, "[c]ooks...")
+	println("Made from the", *recipe, "[r]ecipe...")
+	println("Hiring", *cooks, "[c]ooks...")
 	if *lock {
-		println(" + With their dedicated kitchens...")
+		println(" + Each [lock]ed to their dedicated kitchens...")
 	}
-	println("Hiring", *concurrency, "[w]aiters...")
-	println("Each w", *trials, "[d]iners...")
-	println("Giving each jello", *jiggles, " [j]iggles...")
+	println("Hiring", *waiters, "[w]aiters...")
+	println("Each taking", *orders, "[o]rders...")
+	println("Each order requiring", *jellos, "[j]ellos...")
 
-	for i := 0; i < *workers; i++ {
+	for i := 0; i < *cooks; i++ {
 		var gel jello.Jello
 		if *cgo {
 			gel = jello.NewCgo()
 		} else {
 			gel = jello.NewGor()
 		}
-		w := worker.New(sendWork, recvResults, gel, *jiggles)
+		w := worker.New(sendWork, recvResults, gel, *jellos, *recipe)
 		w.WorkIt(*lock)
 	}
 
-	for i := 0; i < *concurrency; i++ {
+	for i := 0; i < *waiters; i++ {
 		wait4me.Add(1)
-		go Provide(sendWork, recvResults, *trials)
+		go Provide(sendWork, recvResults, *orders)
 	}
 	wait4me.Wait()
 
