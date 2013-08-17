@@ -8,20 +8,24 @@ import (
 	"github.com/mdayaram/cgofail/jello"
 )
 
+type Order struct {
+	Jellos int
+	Done   chan time.Duration
+}
+
 type Cook struct {
-	recv         chan int
-	send         chan time.Duration
+	order_up     chan *Order
 	gel          jello.Jello
 	jello_recipe string
 }
 
-func New(recv chan int, send chan time.Duration, jello jello.Jello, recipe string) *Cook {
+func New(order_up chan *Order, jello jello.Jello, recipe string) *Cook {
 	inbytes, err := ioutil.ReadFile(recipe)
 	if err != nil {
 		panic(err)
 	}
 	instr := string(inbytes)
-	return &Cook{recv: recv, send: send, gel: jello, jello_recipe: instr}
+	return &Cook{order_up: order_up, gel: jello, jello_recipe: instr}
 }
 
 func (w *Cook) StartCooking(use_private_kitchen bool) {
@@ -33,16 +37,16 @@ func (w *Cook) StartCooking(use_private_kitchen bool) {
 		var start time.Time
 		var dur time.Duration
 		for {
-			num_jellos := <-w.recv
+			order := <-w.order_up
 			start = time.Now()
-			for i := 0; i < num_jellos; i++ {
+			for i := 0; i < order.Jellos; i++ {
 				jresult := w.gel.Jiggle(w.jello_recipe, w.jello_recipe)
 				if jresult != w.jello_recipe+w.jello_recipe {
 					panic("Customer found a bug in their Jello.")
 				}
 			}
 			dur = time.Now().Sub(start)
-			w.send <- dur
+			order.Done <- dur
 		}
 	}()
 }

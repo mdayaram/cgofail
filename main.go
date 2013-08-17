@@ -23,8 +23,7 @@ func main() {
 	lock := flag.Bool("lock", false, "Lock each cook to an OS thread.")
 	flag.Parse()
 
-	order_in := make(chan int, *cooks)
-	order_out := make(chan time.Duration, *cooks)
+	order_up := make(chan *cook.Order, *cooks)
 
 	if *cgo {
 		println("Using [cgo] jello...")
@@ -48,7 +47,7 @@ func main() {
 		} else {
 			gel = jello.NewGor()
 		}
-		c := cook.New(order_in, order_out, gel, *recipe)
+		c := cook.New(order_up, gel, *recipe)
 		c.StartCooking(*lock)
 	}
 
@@ -57,8 +56,9 @@ func main() {
 		wait4me.Add(1)
 		go func() {
 			for i := 0; i < *orders; i++ {
-				order_in <- *jellos
-				dur := <-order_out
+				order_done := make(chan time.Duration, 1)
+				order_up <- &cook.Order{Jellos: *jellos, Done: order_done}
+				dur := <-order_done
 				datas.Add(int64(dur))
 			}
 			wait4me.Done()
