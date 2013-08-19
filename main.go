@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"runtime"
 	"sync"
 	"time"
 
@@ -19,16 +20,19 @@ func main() {
 	cooks := flag.Int("c", 1, "Number of cooks in the kitcken cooking.")
 	waiters := flag.Int("w", 10, "Number of waiters taking orders.")
 	orders := flag.Int("o", 10, "Number of orders each waiter takes.")
-	cgo := flag.Bool("cgo", false, "Use cgo for the jiggling instead of go.")
-	lock := flag.Bool("lock", false, "Lock each cook to an OS thread.")
+	cgo := flag.Bool("cgo", false, "Use cgo flavor for the jello (default is pure go flavor).")
+	lock := flag.Bool("lock", false, "Lock each cook to their very own cooking station.")
+	stations := flag.Int("s", runtime.GOMAXPROCS(-1), "Number of cooking stations available in the kitchen")
 	flag.Parse()
+
+	runtime.GOMAXPROCS(*stations)
 
 	order_up := make(chan *cook.Order, *cooks)
 
 	if *cgo {
-		println("Using [cgo] jello...")
+		println("Using [cgo] jello flavor...")
 	} else {
-		println("Using normal jello...")
+		println("Using pure go jello flavor...")
 	}
 	println("Made from the", *recipe, "[r]ecipe...")
 	println("Hiring", *cooks, "[c]ooks...")
@@ -38,6 +42,9 @@ func main() {
 	println("Hiring", *waiters, "[w]aiters...")
 	println("Each taking", *orders, "[o]rders...")
 	println("Each order requiring", *jellos, "[j]ellos...")
+	println("Using", *stations, "cooking [s]tations in the kitchen.")
+	println("Num CPU:", runtime.NumCPU())
+	println()
 
 	// Cooks! Prepare to start cooking!
 	for i := 0; i < *cooks; i++ {
