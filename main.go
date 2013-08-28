@@ -48,13 +48,13 @@ func main() {
 
 	// Cooks! Prepare to start cooking!
 	for i := 0; i < *cooks; i++ {
-		var gel jello.Jello
+		var flavor jello.Jello
 		if *cgo {
-			gel = jello.NewCgo()
+			flavor = jello.NewCgo()
 		} else {
-			gel = jello.NewGor()
+			flavor = jello.NewGor()
 		}
-		c := cook.New(order_up, gel, *recipe)
+		c := cook.New(order_up, flavor, *recipe)
 		c.StartCooking(*lock)
 	}
 
